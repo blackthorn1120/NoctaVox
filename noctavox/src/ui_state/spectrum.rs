@@ -2,6 +2,8 @@ use spectrum_analyzer::{FrequencyLimit, samples_fft_to_spectrum, windows::hann_w
 
 use crate::TAP_BUFFER_CAPACITY;
 
+const PAUSE_DECAY: f32 = 0.92;
+
 pub struct SpectrumState {
     pub bins: Vec<f32>,
     pub display_bins: Vec<f32>,
@@ -110,7 +112,7 @@ impl SpectrumState {
 
     pub fn decay(&mut self) {
         for bin in self.bins.iter_mut() {
-            *bin *= 0.92;
+            *bin *= PAUSE_DECAY;
         }
         self.bins_dirty = true;
     }

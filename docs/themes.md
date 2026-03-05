@@ -1,5 +1,7 @@
 # Themeing
 
+## Note: Document out of date. Will update next week
+
  This document is designed to layout the specifications of the Noctavox
  themeing format. Should any changes be made, they should be reflected here,
  and laid out in the example below.

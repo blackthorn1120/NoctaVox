@@ -8,7 +8,6 @@ use ratatui::{
 };
 
 pub struct Oscilloscope;
-
 impl StatefulWidget for Oscilloscope {
     type State = UiState;
 
@@ -34,7 +33,7 @@ impl StatefulWidget for Oscilloscope {
         Canvas::default()
             .x_bounds([0.0, samples.len() as f64])
             .y_bounds([-1.0, 1.0])
-            .marker(theme.oscilloscope_style)
+            .marker(theme.progress_style)
             .paint(|ctx| {
                 draw_oscilloscope(ctx, &samples, elapsed, &theme);
             })
@@ -67,7 +66,10 @@ fn draw_oscilloscope(ctx: &mut Context, samples: &[f32], time: f32, theme: &Disp
         let progress = i as f32 / samples.len() as f32;
 
         let time = time / 4.0; // Slow down gradient scroll substantially
-        let color = theme.get_focused_color(progress, time);
+        let color = theme
+            .oscilloscope
+            .color
+            .color_at(progress, time, theme.progress_speed);
 
         ctx.draw(&Line {
             x1,

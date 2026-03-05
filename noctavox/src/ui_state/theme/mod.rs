@@ -2,18 +2,26 @@ mod color_utils;
 mod display_theme;
 mod gradients;
 mod import;
+mod parsed;
 mod theme_config;
 mod theme_manager;
 mod theme_utils;
 
-pub use color_utils::{SHARP_FACTOR, fade_color, get_gradient_color};
+pub use color_utils::{SHARP_FACTOR, fade_color, get_gradient_color_at_time};
 pub use display_theme::DisplayTheme;
 pub use gradients::{InactiveGradient, ProgressGradient};
 pub use import::{ProgressGradientRaw, ThemeImport};
+pub use parsed::*;
 pub use theme_config::ThemeConfig;
 pub use theme_manager::ThemeManager;
 
 use ratatui::style::Color;
+
+const BAR_SYMBOL_PLAYED: &'static str = "━";
+const BAR_SYMBOL_UNPLAYED: &'static str = "━";
+const PROGRESS_SPEED: f32 = 6.0;
+const SPECTRUM_MIRROR: bool = false;
+const SPECTRUM_DECAY: f32 = 0.85;
 
 const DARK_WHITE: Color = Color::Rgb(210, 210, 213);
 const MID_GRAY: Color = Color::Rgb(100, 100, 103);

@@ -34,7 +34,7 @@ impl StatefulWidget for BufferLine {
             let label = format!("{desc} | {progress}%").fg(theme.text_muted);
             let guage = Gauge::default()
                 .block(Block::new().borders(Borders::NONE))
-                .gauge_style(theme.selection)
+                .gauge_style(theme.accent)
                 .label(label)
                 .percent(progress as u16 - 1);
 
@@ -159,7 +159,7 @@ fn queue_display(state: &UiState, theme: &DisplayTheme, width: usize) -> Option<
 
     let truncated = truncate_at_last_space(up_next_str, width - 5);
 
-    let up_next_line = Span::from(truncated).fg(state.theme_manager.active.selection_inactive);
+    let up_next_line = Span::from(truncated).fg(state.theme_manager.active.accent_inactive);
 
     let total = state.playback.queue_len();
     let queue_total = format!(" [{total}] ").fg(theme.text_muted);

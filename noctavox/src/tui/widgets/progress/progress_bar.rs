@@ -23,8 +23,18 @@ impl StatefulWidget for ProgressBar {
             // Prevent crash
             let ratio = (elapsed / duration).min(0.9999);
 
-            let fg = theme.get_focused_color(ratio, elapsed);
-            let bg = theme.get_inactive_color(ratio, elapsed, super::DEFAULT_AMP);
+            let fg = theme
+                .progress_bar
+                .active_color
+                .color_at(ratio, elapsed, theme.progress_speed);
+            let bg = theme.progress_bar.inactive_color.color_at(
+                ratio,
+                elapsed,
+                theme.progress_speed,
+                theme.dark,
+                super::DEFAULT_AMP,
+                &theme.progress_bar.active_color,
+            );
 
             let guage = LineGauge::default()
                 .block(Block::new().bg(theme.bg_global).padding(Padding {
@@ -35,8 +45,8 @@ impl StatefulWidget for ProgressBar {
                 }))
                 .filled_style(fg)
                 .unfilled_style(bg)
-                .filled_symbol(&theme.bar_active)
-                .unfilled_symbol(&theme.bar_inactive)
+                .filled_symbol(&theme.progress_bar.played_symbol)
+                .unfilled_symbol(&theme.progress_bar.unplayed_symbol)
                 .label("")
                 .ratio(ratio as f64);
 

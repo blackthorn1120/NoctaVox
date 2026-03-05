@@ -34,7 +34,7 @@ impl StatefulWidget for Waveform {
             Canvas::default()
                 .x_bounds([0.0, wf_len as f64])
                 .y_bounds([WAVEFORM_WIDGET_HEIGHT * -1.0, WAVEFORM_WIDGET_HEIGHT])
-                .marker(theme.waveform_style)
+                .marker(theme.progress_style)
                 .paint(|ctx| {
                     let elapsed = state.get_playback_elapsed_f32();
                     let progress = elapsed / duration_f32;
@@ -44,8 +44,19 @@ impl StatefulWidget for Waveform {
                         let position = idx as f32 / wf_len as f32;
 
                         let color = match position < progress {
-                            true => theme.get_focused_color(position, elapsed),
-                            false => theme.get_inactive_color(position, elapsed, *amp),
+                            true => theme.waveform.active_color.color_at(
+                                position,
+                                elapsed,
+                                theme.progress_speed,
+                            ),
+                            false => theme.waveform.inactive_color.color_at(
+                                position,
+                                elapsed,
+                                theme.progress_speed,
+                                theme.dark,
+                                *amp,
+                                &theme.waveform.active_color,
+                            ),
                         };
 
                         match area.width < 170 {

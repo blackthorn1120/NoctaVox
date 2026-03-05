@@ -1,9 +1,9 @@
 use anyhow::anyhow;
 
 use crate::{
-    key_handler::Incrementor,
-    ui_state::{fade_color, DisplayTheme, PopupType, ThemeConfig, UiState},
     CONFIG_DIRECTORY, THEME_DIRECTORY,
+    key_handler::Incrementor,
+    ui_state::{DisplayTheme, PopupType, ThemeConfig, UiState, fade_color},
 };
 
 pub struct ThemeManager {
@@ -28,12 +28,6 @@ impl ThemeManager {
             cached_focused,
             cached_unfocused,
         }
-    }
-
-    pub fn set_theme(&mut self, theme: ThemeConfig) {
-        self.cached_focused = Self::set_display_theme(&theme, true);
-        self.cached_unfocused = Self::set_display_theme(&theme, false);
-        self.active = theme;
     }
 
     pub fn get_display_theme(&self, focus: bool) -> &DisplayTheme {
@@ -92,13 +86,13 @@ impl ThemeManager {
     fn set_display_theme(theme: &ThemeConfig, focused: bool) -> DisplayTheme {
         let is_dark = theme.is_dark;
 
-        let progress_played = theme.progress_played.to_owned();
-        let progress_unplayed = theme.progress_unplayed.to_owned();
         let progress_speed = theme.progress_speed;
-        let bar_active = theme.bar_active.to_string();
-        let bar_inactive = theme.bar_inactive.to_string();
-        let waveform_style = theme.waveform_style;
-        let oscilloscope_style = theme.oscilloscope_style;
+        let progress_style = theme.progress_style;
+
+        let progress_bar = theme.bar.clone();
+        let oscilloscope = theme.oscillo.clone();
+        let spectrum = theme.spectrum.clone();
+        let waveform = theme.waveform.clone();
 
         match focused {
             true => DisplayTheme {
@@ -112,21 +106,18 @@ impl ThemeManager {
                 text_muted: theme.text_muted,
                 text_selected: theme.text_selection,
 
-                selection: theme.selection,
-
                 accent: theme.accent,
-
                 border: theme.border_active,
                 border_display: theme.border_display,
                 border_type: theme.border_type,
 
-                progress_played,
-                progress_unplayed,
                 progress_speed,
-                bar_active,
-                bar_inactive,
-                waveform_style,
-                oscilloscope_style,
+                progress_style,
+
+                progress_bar,
+                oscilloscope,
+                spectrum,
+                waveform,
             },
 
             false => DisplayTheme {
@@ -140,26 +131,31 @@ impl ThemeManager {
                 text_muted: fade_color(is_dark, theme.text_muted, 0.7),
                 text_selected: theme.text_selection,
 
-                selection: theme.selection_inactive,
                 accent: theme.accent_inactive,
-
                 border: theme.border_inactive,
                 border_display: theme.border_display,
                 border_type: theme.border_type,
 
-                progress_played,
-                progress_unplayed,
                 progress_speed,
-                bar_active,
-                bar_inactive,
-                waveform_style,
-                oscilloscope_style,
+                progress_style,
+
+                progress_bar,
+                oscilloscope,
+                spectrum,
+                waveform,
             },
         }
     }
 }
 
 impl UiState {
+    pub fn set_theme(&mut self, theme: ThemeConfig) {
+        self.theme_manager.cached_focused = ThemeManager::set_display_theme(&theme, true);
+        self.theme_manager.cached_unfocused = ThemeManager::set_display_theme(&theme, false);
+        self.spectrum.decay_factor = theme.spectrum.decay;
+        self.theme_manager.active = theme;
+    }
+
     pub fn refresh_current_theme(&mut self) {
         self.theme_manager.update_themes();
 
@@ -169,7 +165,7 @@ impl UiState {
                     .theme_manager
                     .get_theme_at_index(idx)
                     .unwrap_or_default();
-                self.theme_manager.set_theme(theme);
+                self.set_theme(theme);
             }
             _ => self.set_error(anyhow!(
                 "Formatting error in theme!\n\nFalling back to last loaded"
@@ -186,7 +182,7 @@ impl UiState {
                 .get_theme_at_index(idx)
                 .unwrap_or_default();
 
-            self.theme_manager.set_theme(theme);
+            self.set_theme(theme);
             self.popup.selection.select(Some(idx));
         }
 
@@ -205,7 +201,7 @@ impl UiState {
             Incrementor::Down => (idx + 1) % len,
         };
 
-        self.theme_manager.set_theme(
+        self.set_theme(
             self.theme_manager
                 .theme_lib
                 .get(new_idx)

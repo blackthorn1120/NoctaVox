@@ -11,7 +11,7 @@ use unicode_width::UnicodeWidthStr;
 use crate::{
     SimpleSong,
     library::SongInfo,
-    ui_state::{DisplayTheme, LibraryStats, UiState},
+    ui_state::{DisplayTheme, LibraryStats, UiState, fade_color},
 };
 
 pub struct UserStats;
@@ -163,7 +163,8 @@ fn get_most_played(
         Span::from(format!("{:<title_cutoff$}", "Title")),
         Span::raw(" "),
         Span::from(format!("{:>remainder$}", "Artist  ",)),
-    ]);
+    ])
+    .fg(fade_color(theme.dark, theme.text_muted, 1.4));
 
     let mut lines = vec![header, Line::from("-".repeat(row_width))];
 

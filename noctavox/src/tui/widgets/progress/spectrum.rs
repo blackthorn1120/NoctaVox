@@ -1,6 +1,6 @@
-use crate::ui_state::UiState;
+use crate::ui_state::{UiState, fade_color};
 use ratatui::{
-    style::Stylize,
+    style::{Color, Stylize},
     widgets::{
         Block, Padding, StatefulWidget, Widget,
         canvas::{Canvas, Line},
@@ -36,31 +36,30 @@ impl StatefulWidget for SpectrumAnalyzer {
             return;
         }
 
+        let is_mirrored = theme.spectrum.mirror;
+
+        let y_min = match is_mirrored {
+            true => -1.05,
+            false => 0.05,
+        };
+
         Canvas::default()
             .x_bounds([0.00, pixel_width as f64])
-            .y_bounds([-1.0, 1.05])
-            .marker(theme.oscilloscope_style)
+            .y_bounds([y_min, 1.05]) // The 0.05 prevents overflow
+            .marker(theme.progress_style)
             .paint(|ctx| {
                 for (i, &mag) in display.iter().enumerate() {
-                    let left = (i * 2) as f64;
-                    let right = (i * 2 + 1) as f64;
                     let progress = i as f32 / canvas_width as f32;
-                    let color = theme.get_focused_color(progress, elapsed);
+                    let base =
+                        theme
+                            .spectrum
+                            .colors
+                            .color_at(progress, elapsed, theme.progress_speed);
+                    let color = fade_color(theme.dark, base, mag.clamp(0.25, 1.0));
 
-                    ctx.draw(&Line {
-                        x1: left,
-                        y1: -mag as f64,
-                        x2: left,
-                        y2: mag as f64,
-                        color,
-                    });
-                    ctx.draw(&Line {
-                        x1: right,
-                        y1: -mag as f64,
-                        x2: right,
-                        y2: mag as f64,
-                        color,
-                    });
+                    for x in [i * 2, i * 2 + 1] {
+                        ctx.draw(&spectrum_line(x as f64, mag as f64, is_mirrored, color))
+                    }
                 }
             })
             .background_color(theme.bg_global)
@@ -71,5 +70,18 @@ impl StatefulWidget for SpectrumAnalyzer {
                 bottom: 0,
             }))
             .render(area, buf);
+    }
+}
+
+fn spectrum_line(x: f64, mag: f64, mirrored: bool, color: Color) -> Line {
+    Line {
+        x1: x,
+        y1: match mirrored {
+            true => -mag,
+            false => 0.0,
+        },
+        x2: x,
+        y2: mag,
+        color,
     }
 }

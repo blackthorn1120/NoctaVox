@@ -1,9 +1,6 @@
 use crate::ui_state::{
-    ProgressGradient, ThemeImport,
-    theme::{
-        gradients::InactiveGradient,
-        theme_utils::{parse_borders, parse_display},
-    },
+    ParsedBar, ParsedOscilloscope, ParsedSpectrum, ParsedWaveform, ThemeImport,
+    theme::theme_utils::{parse_borders, parse_display},
 };
 use anyhow::{Result, anyhow};
 use ratatui::{
@@ -36,25 +33,21 @@ pub struct ThemeConfig {
     pub border_inactive: Color, // Border Inactive
 
     // Selection colors
-    pub selection: Color,          // Selection Bar color
-    pub selection_inactive: Color, // Selection inactive
-
-    // Accent
-    pub accent: Color,
-    pub accent_inactive: Color,
+    pub accent: Color,          // Selection Bar color
+    pub accent_inactive: Color, // Selection inactive
 
     // Border configuration
     pub border_display: Borders,
     pub border_type: BorderType,
 
     // Progress Displays
-    pub progress_played: ProgressGradient,
-    pub progress_unplayed: InactiveGradient,
+    pub bar: ParsedBar,
+    pub waveform: ParsedWaveform,
+    pub spectrum: ParsedSpectrum,
+    pub oscillo: ParsedOscilloscope,
+
+    pub progress_style: Marker,
     pub progress_speed: f32,
-    pub bar_active: String,
-    pub bar_inactive: String,
-    pub waveform_style: Marker,
-    pub oscilloscope_style: Marker,
 
     pub decorator: Rc<String>,
 }
@@ -81,80 +74,78 @@ impl TryFrom<&ThemeImport> for ThemeConfig {
 
     fn try_from(config: &ThemeImport) -> anyhow::Result<Self> {
         let colors = &config.colors;
-        let progress = &config.progress;
-
-        let surface_global = *colors.surface_global;
-        let surface_active = *colors.surface_active;
-        let surface_inactive = *colors.surface_inactive;
-        let surface_error = *colors.surface_error;
-
-        let text_primary = *colors.text_primary;
-        let text_secondary = *colors.text_secondary;
-        let text_secondary_in = *colors.text_secondary_in;
-        let text_selection = *colors.text_selection;
-        let text_muted = *colors.text_muted;
-
-        let border_active = *colors.border_active;
-        let border_inactive = *colors.border_inactive;
-
-        let accent = *colors.accent;
-        let accent_inactive = *colors.accent_inactive;
-
-        let selection = *colors.selection;
-        let selection_inactive = *colors.selection_inactive;
-
-        let border_display = parse_borders(&config.borders.border_display);
-
-        let progress_played = ProgressGradient::from_raw(&progress.elapsed)?;
-        let progress_unplayed = InactiveGradient::from_raw(&progress.unplayed)?;
-        let progress_speed = progress.speed / -10.0;
-
-        let bar_active = progress.bar_elapsed.to_owned();
-        let bar_inactive = progress.bar_unplayed.to_owned();
-
-        let waveform_style = parse_display(&progress.waveform_style);
-        let oscilloscope_style = parse_display(&progress.oscilloscope_style);
-
-        let decorator = Rc::from(config.extras.decorator.to_owned());
-        let is_dark = config.extras.is_dark;
+        let progress = config.progress.as_ref();
 
         Ok(ThemeConfig {
             name: String::new(),
 
-            surface_global,
-            surface_active,
-            surface_inactive,
-            surface_error,
+            surface_global: *colors.surface_global,
+            surface_active: *colors.surface_active,
+            surface_inactive: *colors.surface_inactive,
+            surface_error: *colors.surface_error,
 
-            text_primary,
-            text_secondary,
-            text_secondary_in,
-            text_muted,
-            text_selection,
+            text_primary: *colors.text_primary,
+            text_secondary: *colors.text_secondary,
+            text_secondary_in: *colors.text_secondary_in,
+            text_selection: *colors.text_selection,
+            text_muted: *colors.text_muted,
 
-            border_active,
-            border_inactive,
+            border_active: *colors.border_active,
+            border_inactive: *colors.border_inactive,
 
-            selection,
-            selection_inactive,
+            accent: *colors.accent,
+            accent_inactive: *colors.accent_inactive,
 
-            accent,
-            accent_inactive,
+            border_display: parse_borders(
+                config
+                    .borders
+                    .as_ref()
+                    .and_then(|b| b.display)
+                    .unwrap_or(true),
+            ),
+            border_type: config
+                .borders
+                .as_ref()
+                .and_then(|b| b.style)
+                .unwrap_or(BorderType::Rounded),
 
-            border_display,
-            border_type: config.borders.border_type,
+            bar: ParsedBar::parse(progress.and_then(|p| p.bar.as_ref()), *colors.accent)?,
 
-            progress_played,
-            progress_unplayed,
-            progress_speed,
+            oscillo: ParsedOscilloscope::parse(
+                progress.and_then(|p| p.oscilloscope.as_ref()),
+                *colors.accent,
+            )?,
 
-            bar_active,
-            bar_inactive,
-            waveform_style,
-            oscilloscope_style,
+            spectrum: ParsedSpectrum::parse(
+                progress.and_then(|s| s.spectrum.as_ref()),
+                *colors.accent,
+            )?,
 
-            decorator,
-            is_dark,
+            waveform: ParsedWaveform::parse(
+                progress.and_then(|p| p.waveform.as_ref()),
+                *colors.accent,
+            )?,
+
+            progress_speed: progress
+                .and_then(|p| p.speed)
+                .unwrap_or(super::PROGRESS_SPEED)
+                / 10.0,
+            progress_style: parse_display(progress.and_then(|p| p.style.as_deref())),
+
+            decorator: Rc::from(
+                config
+                    .extras
+                    .as_ref()
+                    .and_then(|e| e.decorator.as_deref())
+                    .unwrap_or("✧")
+                    .to_owned(),
+            ),
+
+            is_dark: config
+                .extras
+                .as_ref()
+                .and_then(|e| e.is_dark)
+                .unwrap_or(true),
         })
     }
 }
@@ -181,27 +172,43 @@ impl Default for ThemeConfig {
             border_active: GOLD,
             border_inactive: DARK_GRAY_FADED,
 
-            selection: GOLD,
-            selection_inactive: GOLD_FADED,
-
             accent: GOLD,
             accent_inactive: GOLD_FADED,
 
             border_display: Borders::ALL,
             border_type: BorderType::Rounded,
 
-            progress_played: ProgressGradient::Gradient(Arc::from([
-                DARK_WHITE,
-                GOOD_RED_DARK,
-                DARK_GRAY,
-            ])),
-            progress_unplayed: InactiveGradient::Dimmed,
-            progress_speed: 0.6,
+            progress_style: Marker::Braille,
+            progress_speed: PROGRESS_SPEED / 10.0,
 
-            bar_active: "━".to_string(),
-            bar_inactive: "─".to_string(),
-            waveform_style: Marker::Braille,
-            oscilloscope_style: Marker::Braille,
+            bar: ParsedBar::parse(None, GOLD).expect("If you see this, what have you done?"),
+
+            oscillo: ParsedOscilloscope {
+                color: ProgressGradient::Gradient(Arc::from([
+                    DARK_WHITE,
+                    GOOD_RED_DARK,
+                    DARK_GRAY,
+                ])),
+            },
+
+            spectrum: ParsedSpectrum {
+                colors: ProgressGradient::Gradient(Arc::from([
+                    DARK_WHITE,
+                    GOOD_RED_DARK,
+                    DARK_GRAY,
+                ])),
+                mirror: SPECTRUM_MIRROR,
+                decay: SPECTRUM_DECAY,
+            },
+
+            waveform: ParsedWaveform {
+                active_color: ProgressGradient::Gradient(Arc::from([
+                    DARK_WHITE,
+                    GOOD_RED_DARK,
+                    DARK_GRAY,
+                ])),
+                inactive_color: InactiveGradient::Dimmed,
+            },
 
             decorator: Rc::from("✧".to_string()),
         }

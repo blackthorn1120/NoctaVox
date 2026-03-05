@@ -134,6 +134,9 @@ impl NoctaVox {
                     return Ok(());
                 }
 
+                if self.ui.get_mode() == Mode::Fullscreen {
+                    self.ui.revert_fullscreen();
+                }
                 self.ui.playback.set_now_playing(None);
                 self.ui.clear_waveform();
                 self.ui.set_legal_songs();

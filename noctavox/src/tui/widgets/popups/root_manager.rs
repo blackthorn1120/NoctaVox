@@ -100,7 +100,7 @@ fn render_roots_list(
     let list = List::new(items)
         .fg(state.theme_manager.active.text_muted)
         .highlight_symbol(SELECTOR)
-        .highlight_style(Style::new().fg(theme.selection))
+        .highlight_style(Style::new().fg(theme.accent))
         .highlight_spacing(HighlightSpacing::Always);
 
     ratatui::prelude::StatefulWidget::render(list, area, buf, &mut state.popup.selection);

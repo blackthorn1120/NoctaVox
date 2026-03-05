@@ -3,37 +3,19 @@ use serde::{Deserialize, Deserializer};
 
 #[derive(Deserialize)]
 pub struct BorderScheme {
-    #[serde(default = "default_borders")]
-    pub border_display: String,
-    #[serde(
-        default = "default_border_type",
-        deserialize_with = "deserialize_border_type"
-    )]
-    pub border_type: BorderType,
-}
-
-pub fn default_border_scheme() -> BorderScheme {
-    BorderScheme {
-        border_display: default_borders(),
-        border_type: default_border_type(),
-    }
-}
-
-const DEFAULT_BORDERS: &str = "all";
-fn default_borders() -> String {
-    DEFAULT_BORDERS.to_string()
-}
-
-fn default_border_type() -> BorderType {
-    BorderType::Rounded
+    pub display: Option<bool>,
+    #[serde(default, deserialize_with = "deserialize_border_type")]
+    pub style: Option<BorderType>,
 }
 
 // Allows for case-insenstive matching
-fn deserialize_border_type<'de, D>(deserializer: D) -> Result<BorderType, D::Error>
+fn deserialize_border_type<'de, D>(deserializer: D) -> Result<Option<BorderType>, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let Some(s) = Option::<String>::deserialize(deserializer)? else {
+        return Ok(None);
+    };
 
     // Remove common separators and compare lowercase
     let normalized: String = s
@@ -42,19 +24,19 @@ where
         .flat_map(|c| c.to_lowercase())
         .collect();
 
-    match normalized.as_str() {
-        "plain" => Ok(BorderType::Plain),
-        "rounded" => Ok(BorderType::Rounded),
-        "double" => Ok(BorderType::Double),
-        "thick" => Ok(BorderType::Thick),
-        "lightdoubledashed" => Ok(BorderType::LightDoubleDashed),
-        "heavydoubledashed" => Ok(BorderType::HeavyDoubleDashed),
-        "lighttripledashed" => Ok(BorderType::LightTripleDashed),
-        "heavytripledashed" => Ok(BorderType::HeavyTripleDashed),
-        "lightquadrupledashed" => Ok(BorderType::LightQuadrupleDashed),
-        "heavyquadrupledashed" => Ok(BorderType::HeavyQuadrupleDashed),
-        "quadrantinside" => Ok(BorderType::QuadrantInside),
-        "quadrantoutside" => Ok(BorderType::QuadrantOutside),
-        _ => Ok(BorderType::Rounded),
-    }
+    Ok(Some(match normalized.as_str() {
+        "plain" => BorderType::Plain,
+        "rounded" => BorderType::Rounded,
+        "double" => BorderType::Double,
+        "thick" => BorderType::Thick,
+        "lightdoubledashed" => BorderType::LightDoubleDashed,
+        "heavydoubledashed" => BorderType::HeavyDoubleDashed,
+        "lighttripledashed" => BorderType::LightTripleDashed,
+        "heavytripledashed" => BorderType::HeavyTripleDashed,
+        "lightquadrupledashed" => BorderType::LightQuadrupleDashed,
+        "heavyquadrupledashed" => BorderType::HeavyQuadrupleDashed,
+        "quadrantinside" => BorderType::QuadrantInside,
+        "quadrantoutside" => BorderType::QuadrantOutside,
+        _ => BorderType::Rounded,
+    }))
 }

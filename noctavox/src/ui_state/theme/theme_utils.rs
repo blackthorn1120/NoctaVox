@@ -26,15 +26,18 @@ pub(super) fn parse_rgb(s: &str) -> Result<Color> {
     ))
 }
 
-pub(super) fn parse_borders(s: &str) -> Borders {
-    match s.to_lowercase().trim() {
-        "" | "none" => Borders::NONE,
-        _ => Borders::ALL,
+pub(super) fn parse_borders(b: bool) -> Borders {
+    match b {
+        true => Borders::ALL,
+        false => Borders::NONE,
     }
 }
 
-pub(super) fn parse_display(s: &str) -> Marker {
+pub(super) fn parse_display(s: Option<&str>) -> Marker {
     use Marker::*;
+
+    let s = &s.unwrap_or("dots");
+
     match s.to_lowercase().trim() {
         "block2" | "halfblock" => HalfBlock,
         "block4" | "quadrant" => Quadrant,

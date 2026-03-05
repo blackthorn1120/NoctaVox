@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## Current Development Changes
+
+Optimized startup logic (skip disk read if no changes detected)
+Close fullscreen when queue and playback are empty
+
+Custom themeing has been overhauled, again
+  - All fields outside of the [colors] section are completely optional
+  - Selection field merged into `accent`
+    - (Respective `inactive` field also merged)
+  - Progress widgets will default to accent color if no color is supplied
+
 ## Version 0.2.3
 
 Added spectrum-analyzer widget

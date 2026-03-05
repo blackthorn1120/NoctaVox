@@ -1,4 +1,6 @@
-use crate::ui_state::{ProgressGradientRaw, theme::theme_utils::parse_color};
+use crate::ui_state::{
+    ProgressGradientRaw, fade_color, get_gradient_color_at_time, theme::theme_utils::parse_color,
+};
 use anyhow::Result;
 use ratatui::style::Color;
 use std::sync::Arc;
@@ -35,6 +37,13 @@ impl ProgressGradient {
             }
         }
     }
+
+    pub fn color_at(&self, position: f32, time: f32, speed: f32) -> Color {
+        match &self {
+            ProgressGradient::Static(c) => *c,
+            ProgressGradient::Gradient(g) => get_gradient_color_at_time(&g, position, time * speed),
+        }
+    }
 }
 
 impl InactiveGradient {
@@ -57,6 +66,37 @@ impl InactiveGradient {
                     .collect::<Result<Vec<Color>>>()?;
 
                 Ok(InactiveGradient::Gradient(gradient.into()))
+            }
+        }
+    }
+
+    pub fn color_at(
+        &self,
+        position: f32,
+        time: f32,
+        speed: f32,
+        dark: bool,
+        amp: f32,
+        played: &ProgressGradient,
+    ) -> Color {
+        match self {
+            InactiveGradient::Static(c) => *c,
+            InactiveGradient::Gradient(g) => get_gradient_color_at_time(g, position, time * speed),
+            InactiveGradient::Dimmed => {
+                let brightness = match played {
+                    ProgressGradient::Static(_) => 0.4,
+                    ProgressGradient::Gradient(g) if g.len() == 1 => 0.4,
+                    _ => 0.12 + (amp * 0.4),
+                };
+                fade_color(dark, played.color_at(position, time, speed), brightness)
+            }
+            InactiveGradient::Still => {
+                let brightness = match played {
+                    ProgressGradient::Static(_) => 0.4,
+                    ProgressGradient::Gradient(g) if g.len() == 1 => 0.4,
+                    _ => 0.12 + (amp * 0.4),
+                };
+                fade_color(dark, played.color_at(position, 0.0, speed), brightness)
             }
         }
     }

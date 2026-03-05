@@ -37,7 +37,7 @@ impl StatefulWidget for GenericView {
                 match is_multi_selected {
                     true => Row::new([index, icon, title, artist, filetype, duration])
                         .fg(theme.text_selected)
-                        .bg(state.theme_manager.active.selection_inactive),
+                        .bg(state.theme_manager.active.accent_inactive),
                     false => Row::new([index, icon, title, artist, filetype, duration]),
                 }
             })

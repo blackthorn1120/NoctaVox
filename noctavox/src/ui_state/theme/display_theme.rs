@@ -1,11 +1,8 @@
 use std::rc::Rc;
 
 use crate::ui_state::{
-    ProgressGradient, UiState,
-    theme::{
-        color_utils::{fade_color, get_gradient_color},
-        gradients::InactiveGradient,
-    },
+    ParsedOscilloscope, UiState,
+    theme::parsed::{ParsedBar, ParsedSpectrum, ParsedWaveform},
 };
 use ratatui::{
     style::Color,
@@ -25,58 +22,22 @@ pub struct DisplayTheme {
     pub text_selected: Color,
 
     pub accent: Color,
-    pub selection: Color,
 
     pub border: Color,
     pub border_display: Borders,
     pub border_type: BorderType,
 
-    pub progress_played: ProgressGradient,
-    pub progress_unplayed: InactiveGradient,
     pub progress_speed: f32,
+    pub progress_style: Marker,
 
-    pub bar_active: String,
-    pub bar_inactive: String,
-    pub waveform_style: Marker,
-    pub oscilloscope_style: Marker,
+    pub progress_bar: ParsedBar,
+    pub waveform: ParsedWaveform,
+    pub spectrum: ParsedSpectrum,
+    pub oscilloscope: ParsedOscilloscope,
 }
 
 impl UiState {
     pub fn get_decorator(&self) -> Rc<String> {
         Rc::clone(&self.theme_manager.active.decorator)
-    }
-}
-
-impl DisplayTheme {
-    pub fn get_focused_color(&self, position: f32, time: f32) -> Color {
-        match &self.progress_played {
-            ProgressGradient::Static(c) => *c,
-            ProgressGradient::Gradient(g) => {
-                get_gradient_color(&g, position, time * self.progress_speed)
-            }
-        }
-    }
-
-    pub fn get_inactive_color(&self, position: f32, time: f32, amp: f32) -> Color {
-        let brightness = match &self.progress_played {
-            ProgressGradient::Static(_) => 0.4,
-            ProgressGradient::Gradient(g) if g.len() == 1 => 0.4,
-            _ => 0.12 + (amp * 0.4),
-        };
-
-        match &self.progress_unplayed {
-            InactiveGradient::Static(c) => *c,
-            InactiveGradient::Gradient(g) => {
-                get_gradient_color(g, position, time * self.progress_speed)
-            }
-            InactiveGradient::Dimmed => {
-                let now_color = self.get_focused_color(position, time);
-                fade_color(self.dark, now_color, brightness)
-            }
-            InactiveGradient::Still => {
-                let now_color = self.get_focused_color(position, 0.0); // 0 to prevent movement
-                fade_color(self.dark, now_color, brightness)
-            }
-        }
     }
 }

@@ -49,7 +49,7 @@ impl StatefulWidget for AlbumView {
 
                 match is_m_selected {
                     true => Row::new([track_no, icon, title.into(), artist, format, duration])
-                        .bg(state.theme_manager.active.selection_inactive),
+                        .bg(state.theme_manager.active.accent_inactive),
                     false => Row::new([track_no, icon, title.into(), artist, format, duration]),
                 }
             })

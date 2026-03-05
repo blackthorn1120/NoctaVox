@@ -96,7 +96,7 @@ pub fn create_standard_table<'a>(
         .bg(theme.bg);
 
     let highlight_style = match state.get_pane() {
-        Pane::TrackList => Style::new().fg(theme.text_selected).bg(theme.selection),
+        Pane::TrackList => Style::new().fg(theme.text_selected).bg(theme.accent),
         _ => Style::new(),
     };
 

@@ -1,4 +1,4 @@
-<h1 style="text-align: center"> NoctaVox [v0.2.2]
+<h1 style="text-align: center"> NoctaVox [v0.2.3]
 
 [![Built With Ratatui](https://ratatui.rs/built-with-ratatui/badge.svg)](https://ratatui.rs/)
 </h1>

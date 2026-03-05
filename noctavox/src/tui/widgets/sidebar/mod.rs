@@ -59,7 +59,7 @@ pub fn create_standard_list<'a>(
 
     List::new(list_items)
         .block(block)
-        .highlight_style(Style::new().fg(theme.text_selected).bg(theme.selection))
+        .highlight_style(Style::new().fg(theme.text_selected).bg(theme.accent))
         .scroll_padding((area.height as f32 * 0.15) as usize)
         .highlight_spacing(HighlightSpacing::Always)
 }

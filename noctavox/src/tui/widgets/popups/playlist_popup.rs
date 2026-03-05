@@ -118,7 +118,7 @@ fn render_add_song_popup(
     let list = List::new(list_items)
         .block(block)
         .scroll_padding(area.height as usize - 5)
-        .highlight_style(theme.selection);
+        .highlight_style(theme.accent);
 
     StatefulWidget::render(list, area, buf, &mut state.popup.selection);
 }

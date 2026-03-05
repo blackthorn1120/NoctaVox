@@ -255,6 +255,7 @@ fn handle_search_pane(key: &KeyEvent, state: &UiState) -> Option<Action> {
 fn handle_fullscreen(key: &KeyEvent) -> Option<Action> {
     let action = match (key.modifiers, key.code) {
         (X, Char(' ')) => Action::TogglePlayback,
+        (X, F(6)) => Action::ThemeRefresh,
 
         (X, Char('n')) => Action::SeekForward(SEEK_SMALL),
         (S, Char('N')) => Action::SeekForward(SEEK_LARGE),
