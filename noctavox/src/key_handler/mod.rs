@@ -87,6 +87,8 @@ pub enum Action {
     ShiftPosition(Incrementor),
     ShuffleElements,
 
+    SwapLayout,
+
     // Display
     CycleTheme(Incrementor),
     ThemeManager,

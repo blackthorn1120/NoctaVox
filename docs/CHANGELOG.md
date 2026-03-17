@@ -2,12 +2,16 @@
 
 ## Current Development Changes
 
+EXPERIEMNTING WITH MINIMAL MODE, test functionality with 'm' keybind
+
  - Multi-select count now in border of main window
- - Spectrum widget freezes on pause instead of slowly drains
+ - Spectrum widget freezes on pause instead of slowly draining
  - Oscilloscope operates at a lower resolution, making it visually cleaner
  - Bufferline info overlaps playback widgets instead of having a dedicated row
  - Song titles get more space allocated in bufferline
- - Widgets take up bottom 15% of screen
+ - Widgets now have reactive size elements
+
+- Fixed bug where numbers could not be entered into text fields
 
 ## Version 0.2.4
 

@@ -66,6 +66,8 @@ impl NoctaVox {
             Action::SetFullscreen(p)        => self.ui.set_fullscreen(p),
             Action::RevertFullscreen        => self.ui.revert_fullscreen(),
 
+            Action::SwapLayout      => self.ui.swap_layout(),
+
             Action::ThemeRefresh    => self.ui.refresh_current_theme(),
             Action::ThemeManager    => self.ui.open_theme_manager(),
             Action::CycleTheme(dir) => self.ui.cycle_theme(dir),

@@ -37,6 +37,11 @@ use crate::{
     },
 };
 
+pub enum LayoutStyle {
+    Traditional,
+    Minimal,
+}
+
 pub struct UiState {
     library: Arc<Library>,
     db_worker: DbWorker,
@@ -52,6 +57,7 @@ pub struct UiState {
     pub(crate) sample_tap: VecDeque<f32>,
     pub(crate) spectrum: SpectrumState,
 
+    pub(crate) layout: LayoutStyle,
     waveform: WaveformManager,
     progress_display: ProgressDisplay,
     stats: VoxStats,

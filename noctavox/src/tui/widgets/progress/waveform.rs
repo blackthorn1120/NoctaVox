@@ -1,4 +1,8 @@
-use crate::{library::SongInfo, tui::widgets::WAVEFORM_WIDGET_HEIGHT, ui_state::UiState};
+use crate::{
+    library::SongInfo,
+    tui::widgets::WAVEFORM_WIDGET_HEIGHT,
+    ui_state::{LayoutStyle, UiState},
+};
 use ratatui::{
     style::{Color, Stylize},
     widgets::{
@@ -17,14 +21,29 @@ impl StatefulWidget for Waveform {
         buf: &mut ratatui::prelude::Buffer,
         state: &mut Self::State,
     ) {
-        let theme = state.theme_manager.get_display_theme(true);
-
         let padding_vertical = match area.height {
             0..=6 => 0,
             7..=20 => (area.height as f32 * 0.15) as u16 - 1,
             21..=40 => (area.height as f32 * 0.25) as u16,
             _ => (area.height as f32 * 0.35) as u16,
         };
+
+        let padding = match state.layout {
+            LayoutStyle::Traditional => Padding {
+                left: 10,
+                right: 10,
+                top: padding_vertical + 1,
+                bottom: padding_vertical + 1,
+            },
+            LayoutStyle::Minimal => Padding {
+                left: 1,
+                right: 1,
+                top: padding_vertical + 1,
+                bottom: padding_vertical,
+            },
+        };
+
+        let theme = state.theme_manager.get_display_theme(true);
 
         if let Some(np) = state.get_now_playing() {
             let waveform = state.get_waveform_as_slice();
@@ -66,12 +85,7 @@ impl StatefulWidget for Waveform {
                     }
                 })
                 .background_color(theme.bg_global)
-                .block(Block::new().bg(theme.bg_global).padding(Padding {
-                    left: 10,
-                    right: 10,
-                    top: padding_vertical + 1,
-                    bottom: padding_vertical + 1,
-                }))
+                .block(Block::new().bg(theme.bg_global).padding(padding))
                 .render(area, buf)
         }
     }

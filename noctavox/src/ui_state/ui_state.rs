@@ -7,8 +7,8 @@ use crate::{
     library::SimpleSong,
     player::{PlaybackMetrics, PlaybackState},
     ui_state::{
-        LibraryView, Mode, Pane, PlaylistAction, ProgressDisplay, SettingsMode, ThemeManager,
-        UiState, WaveformManager,
+        LayoutStyle, LibraryView, Mode, Pane, PlaylistAction, ProgressDisplay, SettingsMode,
+        ThemeManager, UiState, WaveformManager,
         popup::{PopupState, PopupType},
         spectrum::SpectrumState,
         stats::VoxStats,
@@ -33,6 +33,8 @@ impl UiState {
             sample_tap: VecDeque::with_capacity(TAP_BUFFER_CAPACITY),
             progress_display: ProgressDisplay::Oscilloscope,
             stats: VoxStats::default(),
+
+            layout: LayoutStyle::Traditional,
 
             popup: PopupState::new(),
             theme_manager: ThemeManager::new(),
@@ -181,5 +183,12 @@ impl UiState {
 
     pub fn player_is_active(&self) -> bool {
         self.metrics.get_state() != PlaybackState::Stopped && self.get_now_playing().is_some()
+    }
+
+    pub fn swap_layout(&mut self) {
+        match self.layout {
+            LayoutStyle::Traditional => self.layout = LayoutStyle::Minimal,
+            LayoutStyle::Minimal => self.layout = LayoutStyle::Traditional,
+        }
     }
 }

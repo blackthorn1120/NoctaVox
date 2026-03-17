@@ -32,7 +32,7 @@ impl std::fmt::Display for ProgressDisplay {
 }
 
 impl UiState {
-    pub fn display_progress(&self) -> bool {
+    pub fn is_progress_display(&self) -> bool {
         self.metrics.get_state() != PlaybackState::Stopped || !self.queue_is_empty()
     }
 

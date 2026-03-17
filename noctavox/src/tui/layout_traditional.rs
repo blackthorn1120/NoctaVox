@@ -1,16 +1,16 @@
 use crate::ui_state::{Mode, ProgressDisplay, UiState};
 use ratatui::layout::{Constraint, Layout, Rect};
 
-pub struct AppLayout {
+pub struct LayoutTraditional {
     pub sidebar: Rect,
     pub search_bar: Rect,
     pub song_window: Rect,
-    pub display_widget: Rect,
+    pub widget: Rect,
 }
 
-impl AppLayout {
+impl LayoutTraditional {
     pub fn new(area: Rect, state: &mut UiState) -> Self {
-        let prog_height = match state.display_progress() {
+        let prog_height = match state.is_progress_display() {
             false => 0,
             true => match (state.get_progress_display(), area.height > 20) {
                 (ProgressDisplay::ProgressBar, _) | (_, false) => 3,
@@ -28,7 +28,6 @@ impl AppLayout {
 
         let [sidebar, upper_block] = Layout::horizontal([
             Constraint::Percentage(state.display_state.sidebar_percent),
-            // Constraint::Length(0),
             Constraint::Fill(1),
         ])
         .areas(upper_block);
@@ -37,11 +36,11 @@ impl AppLayout {
             Layout::vertical([Constraint::Length(search_height), Constraint::Fill(100)])
                 .areas(upper_block);
 
-        AppLayout {
+        LayoutTraditional {
             sidebar,
             search_bar,
             song_window,
-            display_widget,
+            widget: display_widget,
         }
     }
 }

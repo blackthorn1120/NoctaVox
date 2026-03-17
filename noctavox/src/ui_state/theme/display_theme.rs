@@ -35,8 +35,18 @@ pub struct DisplayTheme {
     pub oscilloscope: ParsedOscillo,
 }
 
+impl DisplayTheme {
+    pub fn has_borders(&self) -> bool {
+        self.border_display != Borders::NONE
+    }
+}
+
 impl UiState {
     pub fn get_decorator(&self) -> Rc<String> {
         Rc::clone(&self.theme_manager.active.decorator)
+    }
+
+    pub fn borders_enabled(&self) -> bool {
+        self.theme_manager.active.border_display != Borders::NONE
     }
 }

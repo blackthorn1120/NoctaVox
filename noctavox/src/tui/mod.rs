@@ -1,4 +1,5 @@
-mod layout;
+mod layout_minimal;
+mod layout_traditional;
 mod renderer;
 mod widgets;
 
@@ -8,7 +9,7 @@ use ratatui::{
     widgets::{Block, Widget},
 };
 
-pub use layout::AppLayout;
+pub use layout_traditional::LayoutTraditional;
 pub use renderer::render;
 pub use widgets::{ErrorMsg, Progress, SearchBar, SideBarHandler as SideBar, SongTable};
 

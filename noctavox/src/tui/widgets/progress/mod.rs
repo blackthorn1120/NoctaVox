@@ -36,7 +36,7 @@ impl StatefulWidget for Progress {
                 ProgressDisplay::Oscilloscope => Oscilloscope.render(area, buf, state),
                 ProgressDisplay::Spectrum => SpectrumAnalyzer.render(area, buf, state),
             }
-            Timer.render(area, buf, state);
+            // Timer.render(area, buf, state);
         }
     }
 }

@@ -88,6 +88,8 @@ fn global_commands(key: &KeyEvent, state: &UiState, mut buf_count: usize) -> Opt
             (X, Char('=')) => Some(Action::GoToNowPlaying),
             (S, Char('?')) => Some(Action::ShowStats),
 
+            (X, Char('m')) => Some(Action::SwapLayout),
+
             (C, Char('1')) => Some(Action::ChangeMode(Mode::Library(LibraryView::Albums))),
             (C, Char('2')) => Some(Action::ChangeMode(Mode::Library(LibraryView::Playlists))),
             (C, Char('3')) => Some(Action::ChangeMode(Mode::Queue)),
