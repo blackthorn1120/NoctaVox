@@ -22,12 +22,18 @@ impl NoctaVox {
         let player = PlayerHandle::spawn();
         let metrics = player.metrics();
 
+        let media_controls = crate::media_controls::MediaControlsHandle::new()
+            .map_err(|e| eprintln!("OS media controls unavailable: {e}"))
+            .ok();
+
         NoctaVox {
             library: lib,
             player,
             ui: UiState::new(lib_clone, metrics),
             library_refresh_rec: None,
             key_buffer: KeyBuffer::new(),
+            media_controls,
+            media_sync_tick: 0,
         }
     }
 
@@ -50,6 +56,9 @@ impl NoctaVox {
 
                 if self.ui.get_mode() == Mode::QUIT {
                     self.player.stop()?;
+                    if let Some(mc) = self.media_controls.as_mut() {
+                        mc.set_stopped();
+                    }
                     break;
                 }
             }

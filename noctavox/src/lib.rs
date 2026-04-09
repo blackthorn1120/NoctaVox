@@ -23,6 +23,7 @@ pub mod app_core;
 pub mod database;
 pub mod key_handler;
 pub mod library;
+pub mod media_controls;
 pub mod playback;
 pub mod player;
 pub mod tui;
@@ -45,8 +46,8 @@ pub type SongMap = IndexMap<u64, Arc<SimpleSong>, BuildNoHashHasher<u64>>;
 
 // ~120fps
 pub const REFRESH_RATE: Duration = Duration::from_millis(8);
+pub const DEFAULT_TICK: u32 = 6;
 pub const TAP_BUFFER_CAPACITY: usize = 2048;
-
 pub const THEME_DIRECTORY: &'static str = "themes";
 pub const CONFIG_DIRECTORY: &'static str = "noctavox";
 pub const DATABASE_FILENAME: &'static str = "noctavox.db";

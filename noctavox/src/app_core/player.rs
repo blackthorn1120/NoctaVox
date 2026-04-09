@@ -1,10 +1,10 @@
 use anyhow::{Result, anyhow};
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 
 use crate::{
     app_core::NoctaVox,
     key_handler::SelectionType,
-    library::{SimpleSong, SongDatabase},
+    library::{SimpleSong, SongDatabase, SongInfo},
     playback::ValidatedSong,
     player::{NoctavoxTrack, PlayerEvent},
     ui_state::{LibraryView, Mode},
@@ -121,6 +121,16 @@ impl NoctaVox {
                     song.update_play_count()?;
                     self.ui.clear_waveform();
                     self.ui.request_waveform(&song);
+
+                    if let Some(mc) = self.media_controls.as_mut() {
+                        mc.update_metadata(
+                            song.get_title(),
+                            song.get_artist(),
+                            song.get_album(),
+                            song.get_duration(),
+                        );
+                        mc.set_playing(Duration::ZERO);
+                    }
                 }
 
                 Ok(())
@@ -132,6 +142,10 @@ impl NoctaVox {
                     self.play_song(&song)?;
                     self.sync_player(&delta);
                     return Ok(());
+                }
+
+                if let Some(mc) = self.media_controls.as_mut() {
+                    mc.set_stopped();
                 }
 
                 if self.ui.get_mode() == Mode::Fullscreen {

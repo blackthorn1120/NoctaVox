@@ -29,7 +29,17 @@ walkdir = "2.5.0"
 unicode-normalization = "0.1.25"
 unicode-width = "0.2.2"
 voxio = {version = "0.1.1-rev1", path = "../voxio/" }
+souvlaki = "0.7"
 xxhash-rust = { version = "0.8.15", features = ["xxh3"] }
+
+[target.'cfg(windows)'.dependencies]
+windows = "0.56"
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Gdi",
+    "Win32_System_LibraryLoader",
+    "Win32_UI_WindowsAndMessaging",
+] }
 
 [[bin]]
 name = "vox"
