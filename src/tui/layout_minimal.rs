@@ -28,9 +28,9 @@ impl LayoutMinimal {
         };
 
         let [_lpadding, main_area, _rpadding] = Layout::horizontal([
-            Constraint::Percentage(20),
+            Constraint::Percentage(25),
             Constraint::Fill(1),
-            Constraint::Percentage(20),
+            Constraint::Percentage(25),
         ])
         .areas(area);
 
@@ -79,7 +79,7 @@ impl LayoutMinimal {
 }
 
 fn get_block_height(len: usize, area: Rect) -> usize {
-    (len + 4).clamp(3, (area.height as f64 * 0.5).ceil() as usize)
+    (len + 2).clamp(3, (area.height as f64 * 0.5).ceil() as usize)
 }
 
 // Vertically Centered:

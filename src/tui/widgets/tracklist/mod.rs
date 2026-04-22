@@ -341,8 +341,11 @@ fn get_padding(layout: &LayoutStyle, borders: Borders) -> Padding {
         LayoutStyle::Minimal => Padding {
             left: 2,
             right: 2,
-            top: 1,
-            bottom: v_pad,
+            top: match borders {
+                Borders::NONE => 1,
+                _ => 0,
+            },
+            bottom: 0,
         },
     }
 }

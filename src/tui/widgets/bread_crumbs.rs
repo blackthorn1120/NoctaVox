@@ -1,4 +1,4 @@
-use crate::ui_state::{LibraryView, Pane, UiState, fade_color};
+use crate::ui_state::{LibraryView, Mode, Pane, UiState, fade_color};
 use ratatui::{
     style::Stylize,
     text::{Line, Span},
@@ -16,14 +16,33 @@ impl StatefulWidget for BreadCrumbs {
         buf: &mut ratatui::prelude::Buffer,
         state: &mut Self::State,
     ) {
-        let theme = &state.theme_manager.get_display_theme(true);
-        let (top_level, top_count) = state.get_sidebar_details();
+        if !matches!(state.get_mode(), Mode::Library(_)) {
+            return;
+        }
 
-        let dimmed_secondary = fade_color(theme.dark, theme.text_secondary, 0.80);
+        let theme = &state.theme_manager.get_display_theme(true);
+        let top_level = state.get_sidebar_view();
+        let sidebar = top_level.to_string();
+        let album_sort = state.get_album_sort_string();
+
+        let bc_highlight = fade_color(theme.dark, theme.accent, 0.85);
+
+        let n = area
+            .width
+            .saturating_sub(sidebar.len() as u16)
+            .saturating_sub(album_sort.len() as u16) as usize;
 
         let spans = match state.get_pane() {
             Pane::SideBar => {
-                vec![Span::from(format!("{top_level} ({top_count})")).fg(theme.text_muted)]
+                vec![
+                    Span::from(sidebar).fg(bc_highlight),
+                    Span::from(" ".repeat(n)),
+                    Span::from(format!("  {}", album_sort)).fg(fade_color(
+                        theme.dark,
+                        theme.text_muted,
+                        0.75,
+                    )),
+                ]
             }
             Pane::TrackList => match top_level {
                 LibraryView::Albums => {
@@ -32,7 +51,7 @@ impl StatefulWidget for BreadCrumbs {
                     };
                     Vec::from([
                         Span::from(format!("{top_level}  ")).fg(theme.text_muted),
-                        Span::from(format!("{}", album.title)).fg(dimmed_secondary),
+                        Span::from(format!("{}", album.title)).fg(bc_highlight),
                         Span::from(format!(" [{}]", album.artist)).fg(theme.text_muted),
                     ])
                 }
@@ -42,7 +61,7 @@ impl StatefulWidget for BreadCrumbs {
                     };
                     Vec::from([
                         Span::from(format!("{top_level}  ")).fg(theme.text_muted),
-                        Span::from(format!("{}", playlist.name)).fg(dimmed_secondary),
+                        Span::from(format!("{}", playlist.name)).fg(bc_highlight),
                     ])
                 }
             },

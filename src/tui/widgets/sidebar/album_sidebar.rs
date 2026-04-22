@@ -23,7 +23,7 @@ impl StatefulWidget for SideBarAlbum {
 
         let albums = &state.albums;
         let pane_sort = state.get_album_sort_string();
-        let pane_sort = format!("{pane_sort: <9}");
+        let pane_sort = format!(" {pane_sort:<10}");
         let album_sort = state.get_album_sort();
 
         let selected_album_idx = state.display_state.album_pos.selected();

@@ -9,17 +9,10 @@ use ratatui::{
     layout::Rect,
     style::{Style, Stylize},
     text::Line,
-    widgets::{Block, HighlightSpacing, List, ListItem, Padding},
+    widgets::{Block, Borders, HighlightSpacing, List, ListItem, Padding},
 };
 
 use crate::ui_state::{LayoutStyle, LibraryView, Pane, UiState};
-
-const PADDING: Padding = Padding {
-    left: 3,
-    right: 2,
-    top: 1,
-    bottom: 1,
-};
 
 pub fn create_standard_list<'a>(
     list_items: Vec<ListItem<'a>>,
@@ -62,18 +55,13 @@ pub fn create_standard_list<'a>(
             .title_top(title)
             .title_top(sorting_title.unwrap_or_default())
             .title_bottom(Line::from(keymaps).centered().fg(theme.text_muted))
-            .padding(PADDING),
+            .padding(get_padding(state.get_layout(), theme.border_display)),
         LayoutStyle::Minimal => Block::bordered()
             .borders(theme.border_display)
             .border_type(theme.border_type)
             .border_style(theme.border)
             .bg(theme.bg_global)
-            // .title_top(
-            //     Line::from(titles.0)
-            //         .fg(fade_color(theme.dark, theme.accent, 0.8))
-            //         .centered(),
-            // )
-            .padding(PADDING),
+            .padding(get_padding(state.get_layout(), theme.border_display)),
     };
 
     List::new(list_items)
@@ -81,4 +69,28 @@ pub fn create_standard_list<'a>(
         .highlight_style(Style::new().fg(theme.text_selected).bg(theme.accent))
         .scroll_padding((area.height as f32 * 0.15) as usize)
         .highlight_spacing(HighlightSpacing::Always)
+}
+
+fn get_padding(layout: &LayoutStyle, borders: Borders) -> Padding {
+    let v_pad = match borders {
+        Borders::NONE => 0,
+        _ => 1,
+    };
+    match layout {
+        LayoutStyle::Traditional => Padding {
+            left: 3,
+            right: 2,
+            top: 1,
+            bottom: v_pad,
+        },
+        LayoutStyle::Minimal => Padding {
+            left: 3,
+            right: 2,
+            top: match borders {
+                Borders::NONE => 1,
+                _ => 0,
+            },
+            bottom: 0,
+        },
+    }
 }

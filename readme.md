@@ -26,6 +26,13 @@
 
 ## Installation
 
+**Cargo (recommended)**
+```bash
+cargo install NoctaVox --locked 
+```
+
+**Build With Rust Toolchain**
+
 ```bash
 git clone https://github.com/Jaxx497/noctavox/
 cd noctavox
@@ -35,7 +42,8 @@ cargo run --release
 
 # Or install globally
 cargo install --path noctavox
-# and run with the following:
+
+# and run with the following command:
 vox
 ```
 
