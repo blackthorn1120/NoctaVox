@@ -55,5 +55,3 @@ opt-level = 3
 inherits = "release"
 lto = "thin"
 
-[package.metadata.dist]
-include = []
