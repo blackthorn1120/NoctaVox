@@ -31,7 +31,7 @@ impl LayoutMinimal {
         };
 
         let main_area = {
-            let max_width = area.width.saturating_sub(2).max(MIN_WINDOW_WIDTH);
+            let max_width = area.width.saturating_sub(4).max(MIN_WINDOW_WIDTH);
             let width = (area.width / 2).clamp(MIN_WINDOW_WIDTH, max_width);
             area.centered_horizontally(Constraint::Length(width))
         };

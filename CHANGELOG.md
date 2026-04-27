@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## [0.2.7]
+## [0.2.7] Polished Minimal Mode + Many Bug Fixes 
+
+> #### 2026-04-27
 
 ### Added: 
  - New breadcrumb widget for simplified minimal mode navigation
@@ -9,20 +11,28 @@
    - (Ex: `í` and `i` are not differentiated)
 
 ### Fixed:
+ - Duration values >= 1 hour no longer truncated
+   - Fixed for both timer widget and table display
+ - Minimal mode padding uses adaptive spacing
  - Shuffle commands no longer overriden
  - Fixed broken key binds on non-Windows platforms  
     - `<`, `>`, `{`, `}`, `?`, `~`
  - Fixed conditional error in `./install-themes.sh`
 
 ### Other: 
- - Playback widgets must be set with capitals: `B`, `W`, `O`, `S`
+ - LICENSE file moved to root
+ - Playback widgets be set with capitals: `B`, `W`, `O`, `S`
+ - Timer placement adjusted
  - Indexing colors are more consistent
- - Lots of formatting changes
+ - Songs are verically centered in traditional view
+ - Lots of formatting tweaks
  - Search window cleaner in minimal mode
- - Lots of reformatting to the readme
- - Several clarifications in the theme specification
+ - Changes to readme
+ - Clarifications in theme specification
 
-## [0.2.6] - 2026-04-15
+## [0.2.6] 
+
+> #### 2026-04-15
 
 
 ### New Features 

@@ -30,6 +30,13 @@ const COLUMN_SPACING: u16 = 2;
 pub(super) fn get_widths(state: &UiState) -> Vec<Constraint> {
     let layout = state.get_layout();
 
+    let max_dur_len = state
+        .get_legal_songs()
+        .iter()
+        .map(|s| s.get_duration_str(DurationStyle::Clean).len())
+        .max()
+        .unwrap_or(8) as u16;
+
     match state.get_mode() {
         Mode::Power | Mode::Search => match layout {
             LayoutStyle::Traditional => vec![
@@ -55,13 +62,13 @@ pub(super) fn get_widths(state: &UiState) -> Vec<Constraint> {
                 Constraint::Min(25),
                 Constraint::Max(20),
                 Constraint::Length(4),
-                Constraint::Length(7),
+                Constraint::Length(max_dur_len),
             ],
             LayoutStyle::Minimal => vec![
                 Constraint::Length(3),
                 Constraint::Length(1),
                 Constraint::Fill(1),
-                Constraint::Length(7),
+                Constraint::Length(max_dur_len),
             ],
         },
         _ => Vec::new(),
@@ -183,12 +190,13 @@ impl CellFactory {
         })
     }
 
-    pub fn duration_cell_clean(
+    pub fn duration_cell(
         theme: &DisplayTheme,
         song: &Arc<SimpleSong>,
+        style: DurationStyle,
         ms: bool,
     ) -> Cell<'static> {
-        let duration_str = get_readable_duration(song.get_duration(), DurationStyle::Clean);
+        let duration_str = song.get_duration_str(style);
         Cell::from(Text::from(duration_str).right_aligned()).fg(match ms {
             true => theme.text_selected,
             false => theme.text_muted,

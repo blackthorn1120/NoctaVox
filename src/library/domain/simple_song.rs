@@ -1,5 +1,5 @@
 use super::{FileType, SongInfo};
-use crate::{Database, get_readable_duration};
+use crate::{Database, DurationStyle, get_readable_duration};
 use anyhow::Result;
 use std::{sync::Arc, time::Duration};
 
@@ -72,8 +72,8 @@ impl SongInfo for SimpleSong {
         self.duration.as_secs_f32()
     }
 
-    fn get_duration_str(&self) -> String {
-        get_readable_duration(self.duration, crate::DurationStyle::Compact)
+    fn get_duration_str(&self, style: DurationStyle) -> String {
+        get_readable_duration(self.duration, style)
     }
 }
 
@@ -102,7 +102,7 @@ impl SongInfo for Arc<SimpleSong> {
         self.as_ref().get_duration_f32()
     }
 
-    fn get_duration_str(&self) -> String {
-        self.as_ref().get_duration_str()
+    fn get_duration_str(&self, style: DurationStyle) -> String {
+        self.as_ref().get_duration_str(style)
     }
 }

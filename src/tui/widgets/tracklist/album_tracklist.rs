@@ -1,4 +1,5 @@
 use crate::{
+    DurationStyle,
     library::SongInfo,
     truncate_at_last_space,
     tui::widgets::tracklist::{CellFactory, create_empty_block, create_standard_table},
@@ -46,7 +47,8 @@ impl StatefulWidget for AlbumView {
                 let title = CellFactory::title_cell(theme, song.get_title(), is_m_selected);
                 let artist = CellFactory::artist_cell(theme, song, is_m_selected);
                 let format = CellFactory::filetype_cell(theme, song, is_m_selected);
-                let duration = CellFactory::duration_cell_clean(theme, song, is_m_selected);
+                let duration =
+                    CellFactory::duration_cell(theme, song, DurationStyle::Clean, is_m_selected);
 
                 match state.get_layout() {
                     LayoutStyle::Traditional => match is_m_selected {

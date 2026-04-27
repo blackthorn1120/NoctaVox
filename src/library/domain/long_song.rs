@@ -1,6 +1,7 @@
 use super::{FileType, SongInfo};
 use crate::{
-    calculate_signature, database::Database, get_readable_duration, normalize_metadata_str as nms,
+    DurationStyle, calculate_signature, database::Database, get_readable_duration,
+    normalize_metadata_str as nms,
 };
 use anyhow::{Result, bail};
 use lofty::{
@@ -139,7 +140,7 @@ impl SongInfo for LongSong {
         self.duration.as_secs_f32()
     }
 
-    fn get_duration_str(&self) -> String {
-        get_readable_duration(self.duration, crate::DurationStyle::Compact)
+    fn get_duration_str(&self, style: DurationStyle) -> String {
+        get_readable_duration(self.duration, style)
     }
 }

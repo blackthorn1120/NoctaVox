@@ -1,4 +1,5 @@
 use crate::{
+    DurationStyle,
     library::SongInfo,
     tui::widgets::tracklist::{CellFactory, create_standard_table},
     ui_state::{LayoutStyle, MatchField, Pane, UiState, fade_color},
@@ -43,8 +44,10 @@ impl StatefulWidget for StandardTable {
                 let mut title_col = Cell::from(song.get_title()).fg(inactive);
                 let mut artist_col = Cell::from(song.get_artist()).fg(inactive);
                 let mut album_col = Cell::from(song.get_album()).fg(inactive);
-                let dur_col =
-                    Cell::from(Line::from(song.get_duration_str()).right_aligned()).fg(inactive);
+                let dur_col = Cell::from(
+                    Line::from(song.get_duration_str(DurationStyle::Compact)).right_aligned(),
+                )
+                .fg(inactive);
 
                 if let Some(field) = state.get_match_fields(song.id) {
                     match field {

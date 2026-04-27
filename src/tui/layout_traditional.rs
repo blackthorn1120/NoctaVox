@@ -14,7 +14,10 @@ impl LayoutTraditional {
             false => 0,
             true => match (state.get_progress_display(), area.height > 20) {
                 (ProgressDisplay::ProgressBar, _) | (_, false) => 3,
-                _ => (area.height as f32 * 0.15).ceil() as u16,
+                _ => {
+                    let h = (area.height as f32 * 0.15).ceil() as u16;
+                    h | 1
+                }
             },
         };
 
@@ -23,7 +26,7 @@ impl LayoutTraditional {
             false => 0,
         };
 
-        let [upper_block, display_widget] =
+        let [upper_block, widget] =
             Layout::vertical([Constraint::Min(16), Constraint::Length(prog_height)]).areas(area);
 
         let [sidebar, upper_block] = Layout::horizontal([
@@ -40,7 +43,7 @@ impl LayoutTraditional {
             sidebar,
             search_bar,
             song_window,
-            widget: display_widget,
+            widget,
         }
     }
 }

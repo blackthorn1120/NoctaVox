@@ -47,7 +47,7 @@ impl StatefulWidget for ProgressBar {
             );
 
             let w_pad = match state.get_layout() {
-                LayoutStyle::Traditional => 8,
+                LayoutStyle::Traditional => 10,
                 LayoutStyle::Minimal => 0,
             };
 

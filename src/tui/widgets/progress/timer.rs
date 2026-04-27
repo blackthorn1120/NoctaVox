@@ -1,7 +1,6 @@
 use crate::{
-    get_readable_duration,
+    DurationStyle, get_readable_duration,
     library::SongInfo,
-    tui::widgets::DUR_WIDTH,
     ui_state::{ProgressDisplay, UiState},
 };
 use ratatui::{
@@ -21,34 +20,37 @@ impl StatefulWidget for Timer {
         buf: &mut ratatui::prelude::Buffer,
         state: &mut Self::State,
     ) {
-        let x_pos = area.width - 8;
         let y_pos = match state.get_progress_display() {
-            ProgressDisplay::Waveform | ProgressDisplay::ProgressBar => {
+            ProgressDisplay::ProgressBar | ProgressDisplay::Waveform => {
                 area.y + ((area.height.saturating_sub(1)) / 2)
             }
-            // ProgressDisplay::Spectrum => area.y + 1,
-            _ => area.y,
+            _ => area.y + 1,
         };
 
         let text_color = state.theme_manager.active.text_muted;
 
         let elapsed = state.get_playback_elapsed();
         let elapsed_str = get_readable_duration(elapsed, crate::DurationStyle::Compact);
+        let elapsed_str_len = elapsed_str.len() as u16;
 
         let duration_str = state
             .playback
             .get_now_playing()
             .expect("Expected a song to be playing. [Widget: Waveform]")
-            .get_duration_str();
+            .get_duration_str(DurationStyle::Compact);
+
+        let dur_str_len = duration_str.len() as u16;
+
+        let x_elapsed_pos = 2 + (8_u16.saturating_sub(elapsed_str_len) / 2);
+        let x_dur_pos =
+            (area.x + area.width.saturating_sub(10)) + (10_u16.saturating_sub(dur_str_len) / 2);
 
         Text::from(elapsed_str)
             .fg(text_color)
-            .left_aligned()
-            .render(Rect::new(3, y_pos, DUR_WIDTH, 1), buf);
+            .render(Rect::new(x_elapsed_pos, y_pos, elapsed_str_len, 1), buf);
 
         Text::from(duration_str)
             .fg(text_color)
-            .right_aligned()
-            .render(Rect::new(x_pos, y_pos, DUR_WIDTH, 1), buf);
+            .render(Rect::new(x_dur_pos, y_pos, dur_str_len, 1), buf);
     }
 }

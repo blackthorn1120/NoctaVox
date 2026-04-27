@@ -17,7 +17,6 @@ pub use search::SearchBar;
 pub use sidebar::SideBarHandler;
 pub use song_window::SongTable;
 
-const DUR_WIDTH: u16 = 5;
 const PAUSE_ICON: &str = "󰏤";
 const SELECTOR: &str = "⮞  ";
 const QUEUE_ICON: &str = "󰐑";

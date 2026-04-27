@@ -1,4 +1,5 @@
 use crate::{
+    DurationStyle,
     library::SongInfo,
     tui::widgets::tracklist::{CellFactory, create_standard_table, get_title},
     ui_state::{LayoutStyle, Pane, UiState},
@@ -25,28 +26,31 @@ impl StatefulWidget for GenericView {
             .iter()
             .enumerate()
             .map(|(idx, song)| {
-                let is_multi_selected = state.get_multi_select_indices().contains(&idx);
+                let is_m_selected = state.get_multi_select_indices().contains(&idx);
 
                 let index =
-                    CellFactory::index_cell(&theme, &state.get_layout(), idx, is_multi_selected);
-                let icon = CellFactory::status_cell(song, state, is_multi_selected);
-                let title = CellFactory::title_cell(&theme, song.get_title(), is_multi_selected);
-                let artist = CellFactory::artist_cell(&theme, song, is_multi_selected);
-                let filetype = CellFactory::filetype_cell(&theme, song, is_multi_selected);
-                let duration = CellFactory::duration_cell_clean(&theme, song, is_multi_selected);
+                    CellFactory::index_cell(&theme, &state.get_layout(), idx, is_m_selected);
+                let icon = CellFactory::status_cell(song, state, is_m_selected);
+                let title = CellFactory::title_cell(&theme, song.get_title(), is_m_selected);
+                let artist = CellFactory::artist_cell(&theme, song, is_m_selected);
+                let filetype = CellFactory::filetype_cell(&theme, song, is_m_selected);
+                let duration_clean =
+                    CellFactory::duration_cell(theme, song, DurationStyle::Clean, is_m_selected);
+                let duration_compact =
+                    CellFactory::duration_cell(theme, song, DurationStyle::Compact, is_m_selected);
 
                 match state.get_layout() {
-                    LayoutStyle::Traditional => match is_multi_selected {
-                        true => Row::new([index, icon, title, artist, filetype, duration])
+                    LayoutStyle::Traditional => match is_m_selected {
+                        true => Row::new([index, icon, title, artist, filetype, duration_clean])
                             .fg(theme.text_selected)
                             .bg(state.theme_manager.active.accent_inactive),
-                        false => Row::new([index, icon, title, artist, filetype, duration]),
+                        false => Row::new([index, icon, title, artist, filetype, duration_clean]),
                     },
-                    LayoutStyle::Minimal => match is_multi_selected {
-                        true => Row::new([index, icon, title, duration])
+                    LayoutStyle::Minimal => match is_m_selected {
+                        true => Row::new([index, icon, title, duration_compact])
                             .fg(theme.text_selected)
                             .bg(state.theme_manager.active.accent_inactive),
-                        false => Row::new([index, icon, title, duration]),
+                        false => Row::new([index, icon, title, duration_compact]),
                     },
                 }
             })

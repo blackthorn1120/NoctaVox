@@ -10,6 +10,8 @@ pub use long_song::LongSong;
 pub use playlist::{Playlist, PlaylistSong};
 pub use simple_song::SimpleSong;
 
+use crate::DurationStyle;
+
 pub trait SongInfo {
     fn get_id(&self) -> u64;
     fn get_title(&self) -> &str;
@@ -17,7 +19,7 @@ pub trait SongInfo {
     fn get_album(&self) -> &str;
     fn get_duration(&self) -> std::time::Duration;
     fn get_duration_f32(&self) -> f32;
-    fn get_duration_str(&self) -> String;
+    fn get_duration_str(&self, style: DurationStyle) -> String;
 }
 
 pub trait SongDatabase {
