@@ -25,6 +25,7 @@
               pkgs.rustc
               pkgs.pkg-config
               pkgs.cmake
+              pkgs.alsa-lib
             ];
 
             buildInputs = [
