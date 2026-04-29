@@ -25,8 +25,6 @@
               pkgs.rustc
               pkgs.pkg-config
               pkgs.cmake
-              pkgs.dbus.lib
-              pkgs.alsa-lib
             ];
 
             buildInputs = [
