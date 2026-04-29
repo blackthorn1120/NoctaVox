@@ -60,10 +60,12 @@ impl NoctaVox {
                     self.player.toggle_playback()?;
                 }
             }
+            // NOTE: My Corsair K95 Platninum playpause media key is only interpretted as a Pause event
+            // removing this guard allows the toggle behavior.
             MediaControlEvent::Pause => {
-                if !self.player.is_paused() && !self.player.is_stopped() {
-                    self.player.toggle_playback()?;
-                }
+                // if !self.player.is_paused() && !self.player.is_stopped() {
+                self.player.toggle_playback()?;
+                // }
             }
             MediaControlEvent::Toggle => self.player.toggle_playback()?,
             MediaControlEvent::Next => self.play_next()?,
