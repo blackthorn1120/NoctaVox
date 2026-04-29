@@ -30,6 +30,7 @@
 
             buildInputs = [
               pkgs.ffmpeg
+              pkgs.dbus
             ];
           };
 
