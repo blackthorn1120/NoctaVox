@@ -25,12 +25,12 @@
               pkgs.rustc
               pkgs.pkg-config
               pkgs.cmake
+              pkgs.dbus
               pkgs.alsa-lib
             ];
 
             buildInputs = [
               pkgs.ffmpeg
-              pkgs.dbus
             ];
           };
 
