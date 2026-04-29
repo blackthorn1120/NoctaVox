@@ -25,7 +25,7 @@
               pkgs.rustc
               pkgs.pkg-config
               pkgs.cmake
-              pkgs.dbus
+              pkgs.dbus.lib
               pkgs.alsa-lib
             ];
 
