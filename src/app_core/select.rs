@@ -54,7 +54,7 @@ impl NoctaVox {
 
     fn handle_media_control_event(&mut self, event: MediaControlEvent) -> anyhow::Result<()> {
         match event {
-            MediaControlEvent::Play => self.player.resume(),
+            MediaControlEvent::Play => self.player.toggle_playback(),
             MediaControlEvent::Pause => self.player.toggle_playback(),
             MediaControlEvent::Toggle => self.player.toggle_playback(),
             MediaControlEvent::Next => self.play_next()?,
